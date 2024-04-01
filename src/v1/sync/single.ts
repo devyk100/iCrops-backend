@@ -11,6 +11,7 @@ const dataSchema = z.object({
         longitude: z.number(),
         accuracyCorrection: z.number(),
         landCover: z.string(),
+        locationDescription: z.string()
     }),
     cropInformation: z.object({
         waterSource: z.string(),
@@ -27,7 +28,11 @@ const dataSchema = z.object({
     CCE: z.object({
         sampleSize1: z.number(),
         sampleSize2: z.number(),
-        
+        grainWeight: z.number(),
+        biomassWeight: z.number(),
+        cultivar: z.string(),
+        sowDate: z.date(),
+        harvestDate: z.date()
     })
 })
 
