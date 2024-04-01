@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int    @id @default(autoincrement())
+  username    String @unique
+  email       String @unique
+  password    String
+  Designation String
+  Institute   String
+  Province    String
+  Country     String
+  data        Data[]
+}
+
+model Data {
+  id              Int               @id @default(autoincrement())
+  latitude        Decimal // storing in the precision of 10^-15, use BigInt
+  longitude       Decimal // storing in the preceision of 10^-15, use BigInt
+  accuracy        Decimal
+  landCover       String
+  description     String
+  userId          Int
+  user            User    @relation(fields: [userId], references: [id])
+  cropInformation CropInformation[]
+  CCEdata         CCE[]
+  images          Images[]
+}
+
+model CropInformation {
+  id              Int    @id @default(autoincrement())
+  waterSource     String
+  cropIntensity   String
+  primarySeason   String
+  primaryCrop     String
+  secondarySeason String
+  secondaryCrop   String
+  livestock       String
+  croppingPattern String
+  cropGrowthStage String
+  remarks         String
+  dataId          Int
+  data            Data   @relation(fields: [dataId], references: [id])
+}
+
+model CCE {
+  id            Int      @id @default(autoincrement())
+  sampleSize_1  Int
+  sampleSize_2  Int
+  grainWeight   Int
+  biomassWeight Int
+  cultivar      String
+  sowDate       DateTime
+  harvestDate   DateTime
+  dataId        Int
+  data          Data     @relation(fields: [dataId], references: [id])
+}
+
+model Images {
+  id       Int    @id @default(autoincrement())
+  fileName String
+  dataId   Int
+  data     Data   @relation(fields: [dataId], references: [id])
+}
