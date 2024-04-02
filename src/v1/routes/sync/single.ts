@@ -99,16 +99,26 @@ singleSyncRouter.post("/", async (req, res) => {
   console.log(result);
   res.json({
     message: "succes",
-    dataId: 1,
+    dataId: result.id,
   });
 });
 
-singleSyncRouter.post("/image", (req, res) => {
+singleSyncRouter.post("/image", async (req, res) => {
   const fileData = req.body.fileData;
   // also intercept the extension of the file
   const fileName = `${crypto.randomUUID()}.jpg`;
   saveBase64File(fileData, fileName);
   console.log(fileName, "dataid:", req.body.dataId);
+  const imageResult = await prisma.images.create({
+    data: {
+        fileName: fileName,
+        data: {
+            connect: {
+               id: req.body.dataId 
+            }
+        }
+    }
+  })
   res.send("response received");
 });
 
