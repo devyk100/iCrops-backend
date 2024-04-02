@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
-
+import { saveBase64File } from "../../fileIntercept";
 const prisma = new PrismaClient();
 const singleSyncRouter = Router();
+
 
 const dataSchema = z.object({
     generalData: z.object({
@@ -33,12 +34,25 @@ const dataSchema = z.object({
         cultivar: z.string(),
         sowDate: z.date(),
         harvestDate: z.date()
-    })
+    }),
+    noOfImages: z.number()
 })
 
 singleSyncRouter.post("/", (req, res) => {
-    
+    res.json({
+        message: "succes",
+        dataId: 1
+    })
+    console.log(req.body)
 })
 
+singleSyncRouter.post("/image", (req, res) => {
+    const fileData = req.body.fileData;
+    // also intercept the extension of the file
+    const fileName = `${crypto.randomUUID()}.jpg`;
+    saveBase64File(fileData, fileName)
+    console.log(fileName, "dataid:", req.body.dataId)
+    res.send("response received")
+})
 
 export default singleSyncRouter

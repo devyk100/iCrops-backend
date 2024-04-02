@@ -1,6 +1,6 @@
 import express from "express";
 
-import initialVersionRouter from "./v1";
+import initialVersionRouter from "./v1/routes";
 
 const app = express()
 app.use(express.json())
