@@ -33,6 +33,8 @@ model Data {
   landCover       String
   description     String
   userId          Int
+  imageCount      Int
+  CCECaptured     Boolean
   user            User    @relation(fields: [userId], references: [id])
   cropInformation CropInformation[]
   CCEdata         CCE[]
