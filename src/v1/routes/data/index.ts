@@ -6,8 +6,6 @@ const prisma = new PrismaClient()
 const dataRouter = Router();
 
 dataRouter.post("/", async (req, res) => {
-    const noOfEntries = req.body.noOfEntries;
-    const pageNo = req.body.pageNo;
     const response = await prisma.data.findMany({
         take: 10,
         include: {
@@ -49,8 +47,13 @@ dataRouter.post("/:id", async (req, res) => {
     res.json(response);
 })
 
-dataRouter.get("/", (req, res) => {
+dataRouter.get("/", async (req, res) => {
     res.send("hello")
 })
+
+
+// dataRouter.post("/cce/:id", async (req, res) => {
+//     console.log(req.params.id)
+// })
 
 export default dataRouter
