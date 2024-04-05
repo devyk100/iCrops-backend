@@ -4,8 +4,8 @@ import { sign, verify } from "jsonwebtoken";
 const userRouter = Router();
 
 const prisma = new PrismaClient();
-const JWT_SECRET = "somethinghere";
-
+// @ts-ignore
+export const JWT_SECRET: string = process.env.JWT_SECRET;
 // very important
 declare global {
   namespace Express {

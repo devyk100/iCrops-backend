@@ -2,6 +2,7 @@ import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { saveBase64File } from "../../fileIntercept";
+import { authMiddleware } from "../user";
 const prisma = new PrismaClient();
 const singleSyncRouter = Router();
 
@@ -37,7 +38,7 @@ const dataSchema = z.object({
   noOfImages: z.number(),
 });
 
-singleSyncRouter.post("/", async (req, res) => {
+singleSyncRouter.post("/", authMiddleware,async (req, res) => {
   console.log(req.body);
   const body = req.body;
 
@@ -51,7 +52,7 @@ singleSyncRouter.post("/", async (req, res) => {
     //   userId: 2,
       imageCount: body.noOfImages,
       user: {
-        connect: { id: 2 },
+        connect: { id: req.userId },
       },
     },
   });
@@ -103,7 +104,7 @@ singleSyncRouter.post("/", async (req, res) => {
   });
 });
 
-singleSyncRouter.post("/image", async (req, res) => {
+singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
   const fileData = req.body.fileData;
   // also intercept the extension of the file
   const fileName = `${crypto.randomUUID()}.jpg`;
