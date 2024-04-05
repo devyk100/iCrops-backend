@@ -15,10 +15,10 @@ datasource db {
 
 model User {
   id          Int    @id @default(autoincrement())
-  username    String @unique
   email       String @unique
   password    String
   Designation String
+  admin       Boolean
   Institute   String
   Province    String
   Country     String
@@ -34,7 +34,6 @@ model Data {
   description     String
   userId          Int
   imageCount      Int
-  CCECaptured     Boolean
   user            User    @relation(fields: [userId], references: [id])
   cropInformation CropInformation[]
   CCEdata         CCE[]
