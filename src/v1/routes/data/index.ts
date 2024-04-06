@@ -14,27 +14,32 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
   } = req.query;
   const pageNo = query.pageNo;
   const entries = query.entries;
-  const response = await prisma.data.findMany({
-    skip: (parseInt(pageNo) - 1) * parseInt(entries),
-    take: parseInt(entries),
-    include: {
-      cropInformation: {
-        take: 10,
-      },
-      CCEdata: {
-        take: 10,
-      },
-      images: {
-        take: 10,
-      },
-      user: {
-        include: {
-          _count: true,
+  try {
+    const response = await prisma.data.findMany({
+      skip: (parseInt(pageNo) - 1) * parseInt(entries),
+      take: parseInt(entries),
+      include: {
+        cropInformation: {
+          take: 10,
+        },
+        CCEdata: {
+          take: 10,
+        },
+        images: {
+          take: 10,
+        },
+        user: {
+          include: {
+            _count: true,
+          },
         },
       },
-    },
-  });
-  res.json(response);
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "Failed" });
+    console.log(error);
+  }
 });
 
 dataRouter.post("/:id", adminAuthMiddleware, async (req, res) => {
@@ -43,30 +48,37 @@ dataRouter.post("/:id", adminAuthMiddleware, async (req, res) => {
   if (!id) {
     id = 16;
   }
-  const response = await prisma.data.findFirst({
-    // take:10,
-    where: {
-      id: id,
-    },
-    include: {
-      cropInformation: {
-        take: 10,
+  try {
+    const response = await prisma.data.findFirst({
+      // take:10,
+      where: {
+        id: id,
       },
-      CCEdata: {
-        take: 10,
-      },
-      images: {
-        take: 10,
-      },
-      user: {
-        select: {
-          email: true,
+      include: {
+        cropInformation: {
+          take: 10,
+        },
+        CCEdata: {
+          take: 10,
+        },
+        images: {
+          take: 10,
+        },
+        user: {
+          select: {
+            email: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  res.json(response);
+    res.json(response);
+  } catch (error) {
+    res.json({
+      message: "failed",
+    });
+    console.log(error);
+  }
 });
 
 dataRouter.get("/", async (req, res) => {
@@ -74,17 +86,22 @@ dataRouter.get("/", async (req, res) => {
 });
 
 dataRouter.get("/image/:filename", (req, res) => {
-  const imagePath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "..",
-    "savedImages",
-    req.params.filename
-  );
-  // const image = fs.readFileSync(imagePath);
-  res.sendFile(imagePath);
+  try {
+    const imagePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "..",
+      "savedImages",
+      req.params.filename
+    );
+    // const image = fs.readFileSync(imagePath);
+    res.sendFile(imagePath);
+  } catch (error) {
+    res.json({ message: "failed" });
+    console.log(error);
+  }
 });
 
 // dataRouter.post("/cce/:id", async (req, res) => {
