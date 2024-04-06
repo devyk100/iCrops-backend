@@ -9,13 +9,6 @@ import path from "node:path"
 const prisma = new PrismaClient();
 const app = express()
 
-const sslServer = https.createServer({
-  key: fs.readFileSync(path.join(__dirname, "..", "cert", 'key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, "..", "cert", 'cert.pem'))
-},
-
-app)
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://dit2dtt5nci8z.cloudfront.net/  ');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -33,7 +26,7 @@ app.get("/",(req, res) => {
   res.send("hello")
 })
 
-sslServer.listen(8080, () => {
+app.listen(8080, () => {
   console.log("listening on port 8080");
 })
 
