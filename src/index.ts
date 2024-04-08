@@ -26,8 +26,8 @@ app.get("/",(req, res) => {
   res.send("hello")
 })
 
-app.listen(8080, () => {
-  console.log("listening on port 8080");
+app.listen(10000, () => {
+  console.log("listening on port 10000");
 })
 
 // async function clear(){
