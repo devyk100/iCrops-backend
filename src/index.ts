@@ -1,6 +1,4 @@
 import express from "express";
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
 
 import initialVersionRouter from "./v1/routes";
 import { PrismaClient } from "@prisma/client";
@@ -8,16 +6,8 @@ import cors from "cors";
 import https from "node:https"
 import fs from "node:fs"
 import path from "node:path"
-interface MyContext {
-  token?: string;
-}
-
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 const app = express()
-// const server = new ApolloServer<MyContext>({
-//   typeDefs,
-//   resolvers,
-// });
 
 // app.use((req, res, next) => {
 //   res.header('Access-Control-Allow-Origin', 'https://dit2dtt5nci8z.cloudfront.net/  ');

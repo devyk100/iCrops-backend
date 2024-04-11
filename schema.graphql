@@ -1,0 +1,58 @@
+type Query {
+  data: [Data]
+}
+
+type Data {
+  id: Int
+  latitude: Float
+  longitude: Float
+  accuracy: Float
+  landCover: String
+  description: String
+  user: UserData
+  cce: CceData
+  cropInformation: CropData
+  images: [Image] 
+}
+
+type UserData {
+  id: Int
+  email: String
+  institute: String
+  province: String
+  country: String
+  admin: Boolean
+  designation: String
+}
+
+type CceData {
+  id: Int
+  sampleSize_1: Float
+  sampleSize_2: Float
+  biomassWeight: Float
+  cultivar: String
+  sowDate: String
+  harvestDate: String
+  dataId: Int
+}
+
+type CropData {
+  id: Int
+  waterSource: String
+  cropIntensity: String
+  primarySeason: String
+  secondarySeason: String
+  primaryCrop: String
+  secondaryCrop: String
+  livestock: String
+  croppingPattern: String
+  cropGrowthStage: String
+  remarks: String
+  dataId: Int
+}
+
+type Image {
+  id: Int
+  fileName: String
+  dataId: Int
+}
