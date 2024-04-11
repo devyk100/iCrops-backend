@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import path from "node:path";
-import { adminAuthMiddleware } from "../admin";
+import { adminAuthMiddleware } from "../admin/index.js";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();

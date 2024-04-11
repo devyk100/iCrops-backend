@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx prisma generate && tsc --b && node dist/index.js"
+    "start": "npx prisma generate && tsc --b && node dist/index.js",
+    "compile": "tsc --b"
   },
   "keywords": [],
   "author": "",
@@ -25,10 +26,12 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "prisma": "^5.12.0"
-  }
+    "@types/node": "^20.12.7",
+    "prisma": "^5.12.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "module"
 }

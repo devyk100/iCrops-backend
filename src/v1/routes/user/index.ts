@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
-import { sign, verify } from "jsonwebtoken";
+import pkg from "jsonwebtoken";
 const userRouter = Router();
+
+const { sign, verify } = pkg;
 
 const prisma = new PrismaClient();
 // @ts-ignore

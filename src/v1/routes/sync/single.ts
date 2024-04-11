@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
-import { saveBase64File } from "../../fileIntercept";
-import { authMiddleware } from "../user";
+import { saveBase64File } from "../../fileIntercept/index.js";
+import { authMiddleware } from "../user/index.js";
 const prisma = new PrismaClient();
 const singleSyncRouter = Router();
 

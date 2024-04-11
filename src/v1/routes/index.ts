@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { singleSyncRouter } from "./sync";
-import dataRouter from "./data";
-import userRouter from "./user";
-import adminRouter from "./admin";
+import { singleSyncRouter } from "./sync/index.js";
+import dataRouter from "./data/index.js";
+import userRouter from "./user/index.js";
+import adminRouter from "./admin/index.js";
 
 const initialVersionRouter = Router();
 

@@ -1,6 +1,9 @@
 type Query {
   data: [Data]
+  getData(latitude: Float, longitude: Float, accuracy: Float, landCover: String, description: String, email: String, sampleSize_1: Float, sampleSize_2: Float, biomassWeight: Float, cultivar: String, sowDate: String, harvestDate: String, waterSource: String, cropIntensity: String, primarySeason: String, primaryCrop: String, secondarySeason: String, secondaryCrop: String, livestock: String, croppingPattern: String, cropGrowthStage: String, remarks: String)
 }
+
+
 
 type Data {
   id: Int
@@ -10,8 +13,8 @@ type Data {
   landCover: String
   description: String
   user: UserData
-  cce: CceData
-  cropInformation: CropData
+  CCEdata: [CCE]
+  cropInformation: [CropData]
   images: [Image] 
 }
 
@@ -25,7 +28,7 @@ type UserData {
   designation: String
 }
 
-type CceData {
+type CCE {
   id: Int
   sampleSize_1: Float
   sampleSize_2: Float
