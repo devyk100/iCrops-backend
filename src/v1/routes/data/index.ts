@@ -2,18 +2,84 @@ import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import path from "node:path";
 import { adminAuthMiddleware } from "../admin";
+import { filterAndSearch } from "./filter";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();
+interface imgType {
+  id: number;
+  fileName: string;
+  dataId: number;
+}
 
+export interface cropInfo {
+  waterSource: string;
+  cropGrowthStage: string;
+  cropIntensity: string;
+  livestock: string;
+  croppingPattern: string;
+  primaryCrop: string;
+  primarySeason: string;
+  remarks: string;
+  secondaryCrop: string;
+  secondarySeason: string;
+}
+
+export interface CCEType {
+  biomassWeight: string;
+  cultivar: string;
+  grainWeight: string;
+  dataId: number;
+  harvestDate: Date;
+  id: number;
+  sampleSize_1: number;
+  sampleSize_2: number;
+  sowDate: Date;
+}
+type Data = {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  landCover: string;
+  description: string;
+  cropInformation: cropInfo[];
+  CCEdata: CCEType[];
+  user: {
+    email: string;
+  };
+  images: imgType[];
+};
 dataRouter.post("", adminAuthMiddleware, async (req, res) => {
-  // @ts-ignore
-  const query: {
+  const body: {
     pageNo: string;
     entries: string;
-  } = req.query;
-  const pageNo = query.pageNo;
-  const entries = query.entries;
+    latitude: number | null;
+    longitude: number | null;
+    accuracy: number | null;
+    landCover: string | null;
+    description: string | null;
+    email: string | null;
+    sampleSize_1: number | null;
+    sampleSize_2: number | null;
+    biomassWeight: number | null;
+    cultivar: string | null;
+    sowDate: string | null;
+    harvestDate: string | null;
+    waterSource: string | null;
+    cropIntensity: string | null;
+    primarySeason: string | null;
+    primaryCrop: string | null;
+    secondarySeason: string | null;
+    secondaryCrop: string | null;
+    livestock: string | null;
+    croppingPattern: string | null;
+    cropGrowthStage: string | null;
+    remarks: string | null;
+  } = req.body;
+
+  const pageNo = body.pageNo;
+  const entries = body.entries;
+  console.log("Latitude was sent as ", body.latitude);
   try {
     const response = await prisma.data.findMany({
       skip: (parseInt(pageNo) - 1) * parseInt(entries),
@@ -35,7 +101,58 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
         },
       },
     });
-    res.json(response);
+    const newResponse = response.filter((value) => {
+      return (
+        filterAndSearch(body.latitude, value.latitude) &&
+        filterAndSearch(body.longitude, value.longitude) &&
+        filterAndSearch(body.accuracy, value.accuracy) &&
+        filterAndSearch(body.landCover, value.landCover) &&
+        filterAndSearch(body.description, value.description) &&
+        filterAndSearch(body.email, value.user.email) &&
+        filterAndSearch(body.sampleSize_1, value.CCEdata[0]?.sampleSize_1) &&
+        filterAndSearch(body.sampleSize_2, value.CCEdata[0]?.sampleSize_2) &&
+        filterAndSearch(body.biomassWeight, value.CCEdata[0]?.biomassWeight) &&
+        filterAndSearch(body.cultivar, value.CCEdata[0]?.cultivar) &&
+        filterAndSearch(body.sowDate, value.CCEdata[0]?.sowDate) &&
+        filterAndSearch(body.harvestDate, value.CCEdata[0]?.harvestDate) &&
+        filterAndSearch(
+          body.waterSource,
+          value.cropInformation[0]?.waterSource
+        ) &&
+        filterAndSearch(
+          body.cropIntensity,
+          value.cropInformation[0]?.cropIntensity
+        ) &&
+        filterAndSearch(
+          body.primarySeason,
+          value.cropInformation[0]?.primarySeason
+        ) &&
+        filterAndSearch(
+          body.primaryCrop,
+          value.cropInformation[0]?.primaryCrop
+        ) &&
+        filterAndSearch(
+          body.secondarySeason,
+          value.cropInformation[0]?.secondarySeason
+        ) &&
+        filterAndSearch(
+          body.secondaryCrop,
+          value.cropInformation[0]?.secondaryCrop
+        ) &&
+        filterAndSearch(body.livestock, value.cropInformation[0]?.livestock) &&
+        filterAndSearch(
+          body.croppingPattern,
+          value.cropInformation[0]?.croppingPattern
+        ) &&
+        filterAndSearch(
+          body.cropGrowthStage,
+          value.cropInformation[0]?.cropGrowthStage
+        ) &&
+        filterAndSearch(body.remarks, value.cropInformation[0]?.remarks)
+      );
+    });
+
+    res.json(newResponse);
   } catch (error) {
     res.json({ message: "Failed" });
     console.log(error);
@@ -71,8 +188,8 @@ dataRouter.post("/:id", adminAuthMiddleware, async (req, res) => {
         },
       },
     });
-
-    res.json(response);
+    const count = await prisma.data.count();
+    res.json({...response, count:count});
   } catch (error) {
     res.json({
       message: "failed",
