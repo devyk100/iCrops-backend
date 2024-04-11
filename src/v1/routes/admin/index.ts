@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 import pkg from "jsonwebtoken";
-import { JWT_SECRET } from "../user/index.js";
+import { JWT_SECRET } from "../user";
 const { sign, verify } = pkg;
 const adminRouter = Router()
 // @ts-ignore

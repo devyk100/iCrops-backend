@@ -1,3 +1,3 @@
-import singleSyncRouter from "./single.js"
+import singleSyncRouter from "./single"
 
 export {singleSyncRouter}
