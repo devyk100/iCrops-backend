@@ -186,7 +186,7 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
   }
   })
   
-  dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
+  dataRouter.post("/deleteall", adminAuthMiddleware, async (req, res) => {
     try{
       await prisma.$transaction(async (prisma) => {
         const response = await prisma.data.deleteMany({});
