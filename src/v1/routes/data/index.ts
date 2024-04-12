@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import path from "node:path";
 import { adminAuthMiddleware } from "../admin";
 import { filterAndSearch } from "./filter";
+import {debouncer} from "./fetcher";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();
@@ -81,26 +82,7 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
   const entries = body.entries;
   console.log("Latitude was sent as ", body.latitude);
   try {
-    const response = await prisma.data.findMany({
-      skip: (parseInt(pageNo) - 1) * parseInt(entries),
-      take: parseInt(entries),
-      include: {
-        cropInformation: {
-          take: 10,
-        },
-        CCEdata: {
-          take: 10,
-        },
-        images: {
-          take: 10,
-        },
-        user: {
-          include: {
-            _count: true,
-          },
-        },
-      },
-    });
+    const response = await debouncer(pageNo, entries);
     const newResponse = response.filter((value) => {
       return (
         filterAndSearch(body.latitude, value.latitude) &&
