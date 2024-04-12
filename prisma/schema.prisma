@@ -52,8 +52,8 @@ model CropInformation {
   croppingPattern String
   cropGrowthStage String
   remarks         String
-  dataId          Int
-  data            Data   @relation(fields: [dataId], references: [id])
+  dataId          Int?
+  data            Data?   @relation(fields: [dataId], references: [id])
 }
 
 model CCE {
@@ -65,13 +65,13 @@ model CCE {
   cultivar      String
   sowDate       DateTime
   harvestDate   DateTime
-  dataId        Int
-  data          Data     @relation(fields: [dataId], references: [id])
+  dataId        Int?
+  data          Data?     @relation(fields: [dataId], references: [id])
 }
 
 model Images {
   id       Int    @id @default(autoincrement())
   fileName String
-  dataId   Int
-  data     Data   @relation(fields: [dataId], references: [id])
+  dataId   Int?
+  data     Data?   @relation(fields: [dataId], references: [id])
 }

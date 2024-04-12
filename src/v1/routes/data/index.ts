@@ -151,13 +151,69 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
         filterAndSearch(body.remarks, value.cropInformation[0]?.remarks)
       );
     });
-
-    res.json(newResponse);
+    const count = await prisma.data.count();
+    console.log(count, 'is the count')
+    res.json({response: newResponse, count:count});
+    // res.json(newResponse);
   } catch (error) {
     res.json({ message: "Failed" });
     console.log(error);
   }
 });
+
+
+
+dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
+  const body: {
+    dataId: number[]
+  } = req.body;
+  const dataIdArr = body.dataId
+  console.log(dataIdArr, "is the arraay we got")
+  try{
+
+    const response = await prisma.$transaction(async (pr) => {
+      for(let a of dataIdArr){
+        await pr.data.deleteMany({
+          where: {
+            id: a
+          }
+        })
+        await pr.images.deleteMany({
+          where: {
+            dataId: a
+          }
+        })
+        await pr.cCE.deleteMany({
+          where: {
+            dataId: a
+          }
+        })
+        await pr.cropInformation.deleteMany({
+          where: {
+            dataId: a
+          }
+        })
+      }
+      
+    })
+    res.json({"message": "okay"})
+  }
+  catch(e){
+    res.send("error")
+    console.log(e)
+  }
+  })
+  
+  dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
+    const response = await prisma.data.deleteMany({});
+    const response1 = await prisma.cCE.deleteMany({});
+  const response2 = await prisma.cropInformation.deleteMany({});
+  const response3 = await prisma.images.deleteMany({});
+})
+
+// dataRouter.post("/cce/:id", async (req, res) => {
+//     console.log(req.params.id)
+// })
 
 dataRouter.post("/:id", adminAuthMiddleware, async (req, res) => {
   console.log(req.params.id);
@@ -189,6 +245,7 @@ dataRouter.post("/:id", adminAuthMiddleware, async (req, res) => {
       },
     });
     const count = await prisma.data.count();
+    console.log(count, 'is the count')
     res.json({...response, count:count});
   } catch (error) {
     res.json({
@@ -221,8 +278,5 @@ dataRouter.get("/image/:filename", (req, res) => {
   }
 });
 
-// dataRouter.post("/cce/:id", async (req, res) => {
-//     console.log(req.params.id)
-// })
 
 export default dataRouter;
