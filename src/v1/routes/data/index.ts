@@ -6,7 +6,7 @@ import { filterAndSearch } from "./filter";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();
-interface imgType {
+export interface imgType {
   id: number;
   fileName: string;
   dataId: number;
@@ -36,7 +36,7 @@ export interface CCEType {
   sampleSize_2: number;
   sowDate: Date;
 }
-type Data = {
+export type Data = {
   latitude: number;
   longitude: number;
   accuracy: number;
