@@ -187,10 +187,19 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
   })
   
   dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
-    const response = await prisma.data.deleteMany({});
-    const response1 = await prisma.cCE.deleteMany({});
-  const response2 = await prisma.cropInformation.deleteMany({});
-  const response3 = await prisma.images.deleteMany({});
+    try{
+      await prisma.$transaction(async (prisma) => {
+        const response = await prisma.data.deleteMany({});
+        const response1 = await prisma.cCE.deleteMany({});
+        const response2 = await prisma.cropInformation.deleteMany({});
+        const response3 = await prisma.images.deleteMany({});
+        res.send("done")
+      })
+    }
+    catch(e){
+      console.log(e)
+      res.status(400).send("failed")
+    }
 })
 
 // dataRouter.post("/cce/:id", async (req, res) => {
