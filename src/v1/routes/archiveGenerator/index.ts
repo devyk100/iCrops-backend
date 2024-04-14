@@ -82,6 +82,7 @@ enum Mode{
 }
 
 const archiveMaker = async (req: Request, res: Response, mode: Mode) => {
+  try{
     const newResponse = await requestForFullData(req);
     const zipFolderName = crypto.randomUUID();
     const zipFileName = zipFolderName + ".zip";
@@ -140,6 +141,13 @@ const archiveMaker = async (req: Request, res: Response, mode: Mode) => {
         }, 200000);
       }
     );
+  }
+  catch(e){
+    console.log("error", e)
+    res.send({
+      success: false,
+    })
+  }
 }
 
 

@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import path from "node:path";
 import { adminAuthMiddleware } from "../admin";
 import { filterAndSearch } from "./filter";
-import {debouncer} from "./fetcher";
+import { debouncer } from "./fetcher";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();
@@ -134,8 +134,8 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
       );
     });
     const count = await prisma.data.count();
-    console.log(count, 'is the count')
-    res.json({response: newResponse, count:count});
+    console.log(count, "is the count");
+    res.json({ response: newResponse, count: count });
     // res.json(newResponse);
   } catch (error) {
     res.json({ message: "Failed" });
@@ -143,64 +143,62 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
   }
 });
 
-
-
 dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
   const body: {
-    dataId: number[]
+    dataId: number[];
   } = req.body;
-  const dataIdArr = body.dataId
-  console.log(dataIdArr, "is the arraay we got")
-  try{
-
+  const dataIdArr = body.dataId;
+  console.log(dataIdArr, "is the arraay we got");
+  try {
     const response = await prisma.$transaction(async (pr) => {
-      for(let a of dataIdArr){
+      for (let a of dataIdArr) {
         await pr.data.deleteMany({
           where: {
-            id: a
-          }
-        })
+            id: a,
+          },
+        });
         await pr.images.deleteMany({
           where: {
-            dataId: a
-          }
-        })
+            dataId: a,
+          },
+        });
         await pr.cCE.deleteMany({
           where: {
-            dataId: a
-          }
-        })
+            dataId: a,
+          },
+        });
         await pr.cropInformation.deleteMany({
           where: {
-            dataId: a
-          }
-        })
+            dataId: a,
+          },
+        });
       }
-      
-    })
-    res.json({"message": "okay"})
+    });
+    res.json({ message: "okay" });
+  } catch (e) {
+    res.json({
+      success: false,
+    });
+    console.log(e);
   }
-  catch(e){
-    res.send("error")
-    console.log(e)
+});
+
+dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      const response = await prisma.data.deleteMany({});
+      const response1 = await prisma.cCE.deleteMany({});
+      const response2 = await prisma.cropInformation.deleteMany({});
+      const response3 = await prisma.images.deleteMany({});
+      res.send("done");
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      success: false,
+    });
   }
-  })
-  
-  dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
-    try{
-      await prisma.$transaction(async (prisma) => {
-        const response = await prisma.data.deleteMany({});
-        const response1 = await prisma.cCE.deleteMany({});
-        const response2 = await prisma.cropInformation.deleteMany({});
-        const response3 = await prisma.images.deleteMany({});
-        res.send("done")
-      })
-    }
-    catch(e){
-      console.log(e)
-      res.status(400).send("failed")
-    }
-})
+});
 
 // dataRouter.post("/cce/:id", async (req, res) => {
 //     console.log(req.params.id)
@@ -236,8 +234,8 @@ dataRouter.post("/:id", adminAuthMiddleware, async (req, res) => {
       },
     });
     const count = await prisma.data.count();
-    console.log(count, 'is the count')
-    res.json({...response, count:count});
+    console.log(count, "is the count");
+    res.json({ ...response, count: count });
   } catch (error) {
     res.json({
       message: "failed",
@@ -268,6 +266,5 @@ dataRouter.get("/image/:filename", (req, res) => {
     console.log(error);
   }
 });
-
 
 export default dataRouter;
