@@ -13,7 +13,7 @@ const archiveRouter = Router();
 
 const prisma = new PrismaClient();
 
-const csvGenerator = async (newResponse: any, zipFolderName: string) => {
+export const csvGenerator = async (newResponse: any, zipFolderName: string) => {
   const filename = crypto.randomUUID();
   const columns: string[] = [
     "data-id",
@@ -89,9 +89,6 @@ const archiveMaker = async (req: Request, res: Response, mode: Mode) => {
     const zipFolderName = crypto.randomUUID();
     const zipFileName = zipFolderName + ".zip";
     fs.mkdirSync(path.join(__dirname, zipFolderName));
-    var zip = new AdmZip("", {
-      readEntries: true,
-    });
     let csvfilename = "";
     let xlsxfilename = "";
     if(mode == Mode.csv) csvfilename = await csvGenerator(newResponse, zipFolderName);

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx prisma generate && tsc --b && node dist/index.js"
+    "dev": "npx prisma generate && tsc --b && cp ./src/v1/routes/file/main.py ./dist/v1/routes/file/main.py && node dist/index.js"
   },
   "keywords": [],
   "author": "",

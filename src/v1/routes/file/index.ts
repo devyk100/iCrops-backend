@@ -7,6 +7,7 @@ import { stringify } from "csv-stringify";
 import path from "node:path";
 import xlsxFileDataHandler from "./xlsx";
 import { requestForFullData } from "../data/fetcher";
+import shpFileRouter from "./shp";
 const fileDataRouter = Router();
 const prisma = new PrismaClient();
 const columns: string[] = [
@@ -99,5 +100,6 @@ fileDataRouter.post("/", adminAuthMiddleware, async (req, res) => {
 
 fileDataRouter.use("/xlsx", xlsxFileDataHandler)
 
+fileDataRouter.use("/shp", shpFileRouter);
 
 export default fileDataRouter;
