@@ -16,6 +16,7 @@ const prisma = new PrismaClient();
 const csvGenerator = async (newResponse: any, zipFolderName: string) => {
   const filename = crypto.randomUUID();
   const columns: string[] = [
+    "data-id",
     "Latitude",
     "Longitude",
     "Accuracy",
@@ -46,6 +47,7 @@ const csvGenerator = async (newResponse: any, zipFolderName: string) => {
 //   let newResponse = await requestForData(req);
   for (let a of newResponse.data) {
     let row = {
+      "data-id":a.id.toString(),
       Latitude: a.latitude.toString(),
       Longitude: a.longitude.toString(),
       Accuracy: a.accuracy.toString(),

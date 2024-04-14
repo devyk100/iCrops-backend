@@ -10,6 +10,7 @@ import { requestForFullData } from "../data/fetcher";
 const fileDataRouter = Router();
 const prisma = new PrismaClient();
 const columns: string[] = [
+  "data-id",
     "Latitude",
     "Longitude",
     "Accuracy",
@@ -52,6 +53,7 @@ fileDataRouter.post("/", adminAuthMiddleware, async (req, res) => {
     // res.json(newResponse);
     for(let a of newResponse.data){
         let row = {
+          "data-id":a.id.toString(),
             "Latitude":a.latitude.toString(),
             "Longitude":a.longitude.toString(),
             "Accuracy":a.accuracy.toString(),

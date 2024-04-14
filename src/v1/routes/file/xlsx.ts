@@ -18,6 +18,10 @@ import { requestForFullData } from "../data/fetcher";
 const prisma = new PrismaClient();
 const HEADER_ROW = [
   {
+    value: "data-id",
+    fontWeight: "bold",
+  },
+  {
     value: "Latitude",
     fontWeight: "bold",
   },
@@ -120,6 +124,7 @@ xlsxFileDataHandler.post("", async (req, res) => {
       const cceData = value.CCEdata.length > 0 ? value.CCEdata[0] : null;
 
       return [
+        { type: String, value: value.id.toString() || " " },
         { type: String, value: value.latitude.toString() || " " },
         { type: String, value: value.longitude.toString() || " " },
         { type: String, value: value.accuracy.toString() || " " },
