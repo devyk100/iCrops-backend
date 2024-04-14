@@ -116,9 +116,11 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
   try {
     const fileData = req.body.fileData;
     // also intercept the extension of the file
+    console.log("SAVED THE IMAGE CHECK POINT 1", fileData);
     const fileName = `${crypto.randomUUID()}.jpg`;
     saveBase64File(fileData, fileName);
     console.log(fileName, "dataid:", req.body.dataId);
+    console.log("SAVED THE IMAGE CHECK POINT 2")
     const imageResult = await prisma.images.create({
       data: {
         fileName: fileName,
@@ -129,10 +131,12 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
         },
       },
     });
+    console.log("SAVED THE IMAGE CHECK POINT 3");
     res.json({
       success: true,
     });
   } catch (e) {
+    console.log("NOT SAVED THE IMAGE CHECK POINT 4");
     console.log(e);
     res.json({
       success: false,
