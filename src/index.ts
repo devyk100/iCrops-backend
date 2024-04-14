@@ -7,6 +7,7 @@ import https from "node:https"
 import fs from "node:fs"
 import path from "node:path"
 import { readFileSync } from "fs";
+import bodyParser from "body-parser";
 const prisma = new PrismaClient();
 const app = express()
 
@@ -17,11 +18,10 @@ const app = express()
 //   next();
 // });
 
+app.use(bodyParser.json({ limit: '20mb' }));
+app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 
 app.use(cors())
-app.use(express.json({
-  limit: "50mb"
-}))
 
 
 
@@ -32,6 +32,7 @@ app.get("/",(req, res) => {
   res.send("hello")
 })
 
-app.listen(8080, () => {
+const server = app.listen(8080, () => {
   console.log("listening on port 8080");
+  server.setTimeout(60000)
 })
