@@ -1,0 +1,4 @@
+please add these 3
+DATABASE_URL="something"
+JWT_SECRET="123"
+ADMIN_SECRET="123"

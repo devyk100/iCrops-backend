@@ -60,6 +60,7 @@ adminRouter.post("/login", async (req, res) => {
             admin: true
           },
         });
+        console.log(response, " FROM THE DB");
         const jwt = await sign({ id: response.id }, JWT_SECRET);
         res.send({ jwt, success: true, email: response.email });
       } catch (e) {
