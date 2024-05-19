@@ -2,3 +2,4 @@ please add these 3
 DATABASE_URL="something"
 JWT_SECRET="123"
 ADMIN_SECRET="123"
+# do not forget to increase the max payload of request in nginx

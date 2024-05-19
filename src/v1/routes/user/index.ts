@@ -66,6 +66,7 @@ userRouter.post("/signup", async (req, res) => {
         password: body.password,
         Province: body.Province,
         admin: false,
+        synced: 0
       },
     });
     console.log(response);

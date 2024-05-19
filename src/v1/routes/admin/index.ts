@@ -92,6 +92,7 @@ adminRouter.post("/signup", async (req, res) => {
           password: body.password,
           Province: body.Province,
           admin: true,
+          synced: 0
         },
       });
       console.log(response);

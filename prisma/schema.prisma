@@ -23,6 +23,7 @@ model User {
   Province    String
   Country     String
   data        Data[]
+  synced      Int
 }
 
 model Data {
@@ -38,6 +39,7 @@ model Data {
   cropInformation CropInformation[]
   CCEdata         CCE[]
   images          Images[]
+  integrity       Integrity[]
 }
 
 model CropInformation {
@@ -74,4 +76,13 @@ model Images {
   fileName String
   dataId   Int?
   data     Data?   @relation(fields: [dataId], references: [id])
+}
+
+model Integrity{
+  id        Int     @id @default(autoincrement())
+  dataId    Int
+  data      Data @relation(fields: [dataId], references: [id])
+  timerId   Int
+  timeAdded DateTime
+  complete  Boolean
 }

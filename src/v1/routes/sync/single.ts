@@ -6,37 +6,47 @@ import { authMiddleware } from "../user";
 const prisma = new PrismaClient();
 const singleSyncRouter = Router();
 
-const dataSchema = z.object({
-  generalData: z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-    accuracyCorrection: z.number(),
-    landCover: z.string(),
-    locationDescription: z.string(),
-  }),
-  cropInformation: z.object({
-    waterSource: z.string(),
-    cropIntensity: z.string(),
-    primarySeason: z.string(),
-    primaryCrop: z.string(),
-    secondarySeason: z.string(),
-    secondaryCrop: z.string(),
-    livestock: z.string(),
-    croppingPattern: z.string(),
-    cropGrowthStage: z.string(),
-    remarks: z.string(),
-  }),
-  CCE: z.object({
-    sampleSize1: z.number(),
-    sampleSize2: z.number(),
-    grainWeight: z.number(),
-    biomassWeight: z.number(),
-    cultivar: z.string(),
-    sowDate: z.date(),
-    harvestDate: z.date(),
-  }),
-  noOfImages: z.number(),
-});
+const DeleteTimeout = 60 *  1000; // MILLISECONDS - 1 Hour
+
+setInterval(async () => {
+    const response = await prisma.integrity.findMany({});
+    for(let a of response){
+      const timeAdded = a.timeAdded;
+      const timeNow = new Date();
+      const diff = timeNow.getTime() - timeAdded.getTime();
+      if(a.complete){
+        await prisma.integrity.delete({where:{id: a.id}})
+      }
+      else if(a.complete == false && diff >= DeleteTimeout){
+        await prisma.images.deleteMany(
+          {where: {
+            dataId: a.dataId
+          }}
+        )
+        await prisma.cCE.deleteMany({
+          where: {
+            dataId: a.dataId
+          }
+        })
+        await prisma.cropInformation.deleteMany({
+          where:{ 
+            dataId: a.dataId
+          }
+        })
+        await prisma.integrity.deleteMany({
+          where:{
+            dataId: a.dataId
+          }
+        })
+        await prisma.data.deleteMany({
+          where: {
+            id: a.dataId
+          }
+        })
+      }
+    }
+},  DeleteTimeout * 6)
+
 
 singleSyncRouter.post("/", authMiddleware, async (req, res) => {
   try {
@@ -99,6 +109,59 @@ singleSyncRouter.post("/", authMiddleware, async (req, res) => {
       });
     }
     console.log(result);
+
+    const timerId = setTimeout(async () => {
+      const res = await prisma.integrity.findFirst({
+        where: {
+          dataId: result.id
+        }
+      })
+      if(res?.complete){
+        await prisma.integrity.deleteMany({
+          where: {
+            dataId: result.id
+          }
+        })
+      }
+      else{
+        await prisma.integrity.deleteMany({
+          where: {
+            dataId: result.id
+          }
+        })
+
+        await prisma.cCE.deleteMany({
+          where: {
+            dataId: result.id
+          }
+        })
+        await prisma.cropInformation.deleteMany({
+          where: {
+            dataId: result.id
+          }
+        })
+        await prisma.images.deleteMany({
+          where: {
+            dataId: result.id
+          }
+        })
+        await prisma.data.delete({
+          where: {
+            id: result.id
+          }
+        })
+      }
+    }, DeleteTimeout)
+    console.log(timerId, "IS THE TIMERID")
+    const response = await prisma.integrity.create({
+      data:{
+        timeAdded: new Date(),
+        timerId: 0,
+        dataId: result.id,
+        complete: false
+      }
+    })
+
     res.json({
       message: "succes",
       success: true,
@@ -143,5 +206,28 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
     });
   }
 });
+
+singleSyncRouter.post("/complete", async (req, res) => {
+  try{
+    const dataId = req.body.dataId;
+    const response = await prisma.integrity.updateMany({
+      where: {
+        dataId: dataId
+      },
+      data: {
+        complete: true
+      }
+    })
+    res.json({
+      success: true
+    })
+    return;
+  }
+  catch(error){
+    res.json({
+      success: false
+    })
+  }
+})
 
 export default singleSyncRouter;
