@@ -179,7 +179,7 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
   try {
     const fileData = req.body.fileData;
     // also intercept the extension of the file
-    console.log("SAVED THE IMAGE CHECK POINT 1", fileData);
+    // console.log("SAVED THE IMAGE CHECK POINT 1", fileData);
     const fileName = `${crypto.randomUUID()}.jpg`;
     saveBase64File(fileData, fileName);
     console.log(fileName, "dataid:", req.body.dataId);
