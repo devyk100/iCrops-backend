@@ -184,6 +184,7 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
     saveBase64File(fileData, fileName);
     console.log(fileName, "dataid:", req.body.dataId);
     console.log("SAVED THE IMAGE CHECK POINT 2")
+    console.log("THE DATAID", req.body.dataId)
     const imageResult = await prisma.images.create({
       data: {
         fileName: fileName,
