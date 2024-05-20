@@ -152,11 +152,6 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
   try {
     const response = await prisma.$transaction(async (pr) => {
       for (let a of dataIdArr) {
-        await pr.data.deleteMany({
-          where: {
-            id: a,
-          },
-        });
         await pr.images.deleteMany({
           where: {
             dataId: a,
@@ -170,6 +165,16 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
         await pr.cropInformation.deleteMany({
           where: {
             dataId: a,
+          },
+        });
+        await pr.integrity.deleteMany({
+          where: {
+            dataId: a,
+          }
+        })
+        await pr.data.deleteMany({
+          where: {
+            id: a,
           },
         });
       }
@@ -186,10 +191,11 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
 dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
   try {
     await prisma.$transaction(async (prisma) => {
-      const response = await prisma.data.deleteMany({});
       const response1 = await prisma.cCE.deleteMany({});
       const response2 = await prisma.cropInformation.deleteMany({});
       const response3 = await prisma.images.deleteMany({});
+      const response4 = await prisma.integrity.deleteMany({});
+      const response = await prisma.data.deleteMany({});
       res.send("done");
     });
   } catch (e) {
