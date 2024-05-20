@@ -42,6 +42,7 @@ export const adminAuthMiddleware = async (
       } catch (e) {
         res.json({
           success: false,
+          logOut: true
         });
         console.log(e);
       }
