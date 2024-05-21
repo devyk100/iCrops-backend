@@ -1,8 +1,8 @@
 const { ExifTool } = require('exiftool-vendored');
 import path from "node:path"
-const exiftool = new ExifTool();
 
 export async function setGPSMetadata(imagePath: string, latitude: number | undefined, longitude: number | undefined) {
+  const exiftool = new ExifTool();
   if(latitude == undefined || longitude == undefined ) throw Error();
   console.log(latitude, "IS THE LAT FOR GPS", longitude, "IS THE LONG")
   // imagePath = path.join(__dirname, "..", "..", "..", "savedImages", imagePath)
