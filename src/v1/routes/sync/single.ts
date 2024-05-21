@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { saveBase64File } from "../../fileIntercept";
 import { authMiddleware } from "../user";
+import { setGPSMetadata } from "./imageMetaDataSetter";
 const prisma = new PrismaClient();
 const singleSyncRouter = Router();
 
@@ -196,6 +197,13 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
       },
     });
     console.log("SAVED THE IMAGE CHECK POINT 3");
+    const data = await prisma.data.findFirst({
+      where:{
+        id: req.body.dataId
+      }
+    })
+    // const latitude: number = data?.latitude.toNumber();
+    setGPSMetadata(fileName, data?.latitude.toNumber(), data?.longitude.toNumber());
     res.json({
       success: true,
     });
