@@ -182,7 +182,12 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
     // also intercept the extension of the file
     // console.log("SAVED THE IMAGE CHECK POINT 1", fileData);
     const fileName = `${crypto.randomUUID()}.jpg`;
-    saveBase64File(fileData, fileName);
+    const data = await prisma.data.findFirst({
+      where:{
+        id: req.body.dataId
+      }
+    })
+    saveBase64File(fileData, fileName, data?.latitude.toNumber(), data?.longitude.toNumber());
     console.log(fileName, "dataid:", req.body.dataId);
     console.log("SAVED THE IMAGE CHECK POINT 2")
     console.log("THE DATAID", req.body.dataId)
@@ -197,13 +202,8 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
       },
     });
     console.log("SAVED THE IMAGE CHECK POINT 3");
-    const data = await prisma.data.findFirst({
-      where:{
-        id: req.body.dataId
-      }
-    })
     // const latitude: number = data?.latitude.toNumber();
-    setGPSMetadata(fileName, data?.latitude.toNumber(), data?.longitude.toNumber());
+    // setGPSMetadata(fileName, data?.latitude.toNumber(), data?.longitude.toNumber());
     res.json({
       success: true,
     });

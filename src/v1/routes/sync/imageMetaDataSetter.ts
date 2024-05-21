@@ -4,7 +4,8 @@ const exiftool = new ExifTool();
 
 export async function setGPSMetadata(imagePath: string, latitude: number | undefined, longitude: number | undefined) {
   if(latitude == undefined || longitude == undefined ) throw Error();
-  imagePath = path.join(__dirname, "..", "..", "..", "savedImages", imagePath)
+  console.log(latitude, "IS THE LAT FOR GPS", longitude, "IS THE LONG")
+  // imagePath = path.join(__dirname, "..", "..", "..", "savedImages", imagePath)
   
   try {
     // Convert latitude and longitude to the format required by ExifTool
