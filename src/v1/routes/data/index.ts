@@ -4,6 +4,7 @@ import path from "node:path";
 import { adminAuthMiddleware } from "../admin";
 import { filterAndSearch } from "./filter";
 import { debouncer } from "./fetcher";
+import { authMiddleware } from "../user";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();
@@ -272,5 +273,7 @@ dataRouter.get("/image/:filename", (req, res) => {
     console.log(error);
   }
 });
+
+
 
 export default dataRouter;

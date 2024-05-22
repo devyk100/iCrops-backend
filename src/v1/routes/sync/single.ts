@@ -216,7 +216,8 @@ singleSyncRouter.post("/image", authMiddleware, async (req, res) => {
   }
 });
 
-singleSyncRouter.post("/complete", async (req, res) => {
+singleSyncRouter.post("/complete/", authMiddleware,async (req, res) => {
+  const userId = req.userId
   try{
     const dataId = req.body.dataId;
     const response = await prisma.integrity.updateMany({
@@ -227,15 +228,59 @@ singleSyncRouter.post("/complete", async (req, res) => {
         complete: true
       }
     })
+    await prisma.user.update({
+      where:{
+        id: req.userId
+      },
+      data:{
+        synced: {
+          increment: 1
+        }
+      }
+    })
     res.json({
       success: true
+    })
+    await prisma.integrity.updateMany({
+      where: {
+        dataId: dataId
+      },
+      data: {
+        complete: false
+      }
     })
     return;
   }
   catch(error){
+    console.log(error)
     res.json({
       success: false
     })
+  }
+})
+
+singleSyncRouter.post("/synced/", authMiddleware, async (req, res) => {
+  console.log("helloweas")
+  try {
+    const userId = req.userId;
+    const response = await prisma.user.findFirst({
+      where: {
+        id: userId
+      }
+    })
+    const response2 = await prisma.data.findMany({
+      where:{
+        userId: userId
+      }
+    })
+    console.log("SYNCED Data request it is ", response?.synced);
+    res.json({
+      synced: response?.synced,
+      success: true
+    })
+  }
+  catch (error) {
+    console.log(error," IS THE ERROR")
   }
 })
 
