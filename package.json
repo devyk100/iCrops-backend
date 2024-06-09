@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx prisma generate && tsc --b && cp ./src/v1/routes/file/main.py ./dist/v1/routes/file/main.py && node dist/index.js"
+    "dev": "npx prisma generate && npx prisma migrate deploy && tsc --b && cp ./src/v1/routes/file/main.py ./dist/v1/routes/file/main.py && node dist/index.js",
+    "build-and-run": "npx prisma generate && npx prisma migrate deploy && tsc --build && copy .\\src\\v1\\routes\\file\\main.py .\\dist\\v1\\routes\\file\\main.py && node dist\\index.js"
   },
   "keywords": [],
   "author": "",
