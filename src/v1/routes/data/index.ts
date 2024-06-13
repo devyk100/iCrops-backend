@@ -19,7 +19,7 @@ export interface cropInfo {
   waterSource: string;
   cropGrowthStage: string;
   cropIntensity: string;
-  livestock: string;
+  // livestock: string;
   croppingPattern: string;
   primaryCrop: string;
   primarySeason: string;
@@ -74,7 +74,7 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
     primaryCrop: string | null;
     secondarySeason: string | null;
     secondaryCrop: string | null;
-    livestock: string | null;
+    // livestock: string | null;
     croppingPattern: string | null;
     cropGrowthStage: string | null;
     remarks: string | null;
@@ -123,7 +123,7 @@ dataRouter.post("", adminAuthMiddleware, async (req, res) => {
           body.secondaryCrop,
           value.cropInformation[0]?.secondaryCrop
         ) &&
-        filterAndSearch(body.livestock, value.cropInformation[0]?.livestock) &&
+        // filterAndSearch(body.livestock, value.cropInformation[0]?.livestock) &&
         filterAndSearch(
           body.croppingPattern,
           value.cropInformation[0]?.croppingPattern

@@ -25,7 +25,7 @@ const columns: string[] = [
   "Primary Crop",
   "Secondary Season",
   "Secondary Crop",
-  "Livestock",
+  // "Livestock",
   "Cropping Pattern",
   "Crop Growth Stage",
   "Remarks",
@@ -74,7 +74,7 @@ fileDataRouter.post("/", adminAuthMiddleware, async (req, res) => {
         "Primary Crop": a.cropInformation[0]?.primaryCrop,
         "Secondary Season": a.cropInformation[0]?.secondarySeason,
         "Secondary Crop": a.cropInformation[0]?.secondaryCrop,
-        "Livestock": a.cropInformation[0]?.livestock,
+        // "Livestock": a.cropInformation[0]?.livestock,
         "Cropping Pattern": a.cropInformation[0]?.croppingPattern,
         "Crop Growth Stage": a.cropInformation[0]?.cropGrowthStage,
         "Remarks": a.cropInformation[0]?.remarks

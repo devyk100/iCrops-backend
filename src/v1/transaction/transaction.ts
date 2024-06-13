@@ -28,7 +28,7 @@ interface DataType {
         cropIntensity: string,
         primarySeason: { seasonName: string, cropName: string },
         secondarySeason: { seasonName: string, cropName: string },
-        liveStock: string,
+        // liveStock: string,
         croppingPattern: string,
         cropGrowthStage: string,
         remarks: string
@@ -110,7 +110,9 @@ export class Transactions {
         if (body) {
             if (body.latitude != null && body.longitude != null && body.accuracyCorrection != null && body.landCoverType != null) {
                 if (body.landCoverType == "Cropland") {
-                    if (body.cropInformation.cropGrowthStage != null && body.cropInformation.cropIntensity != null && body.cropInformation.croppingPattern != null && body.cropInformation.isCaptured != null && body.cropInformation.liveStock != null && body.cropInformation.primarySeason.cropName != null && body.cropInformation.primarySeason.seasonName != null && body.cropInformation.secondarySeason.cropName != null && body.cropInformation.secondarySeason.seasonName != null) {
+                    if (body.cropInformation.cropGrowthStage != null && body.cropInformation.cropIntensity != null && body.cropInformation.croppingPattern != null && body.cropInformation.isCaptured != null &&
+                        // body.cropInformation.liveStock != null && 
+                        body.cropInformation.primarySeason.cropName != null && body.cropInformation.primarySeason.seasonName != null && body.cropInformation.secondarySeason.cropName != null && body.cropInformation.secondarySeason.seasonName != null) {
                         console.log("hello", "NO ERRPR")
                     }
                     else return;
@@ -147,7 +149,7 @@ export class Transactions {
                     cropGrowthStage: cropInformation.cropGrowthStage,
                     cropIntensity: cropInformation.cropIntensity,
                     croppingPattern: cropInformation.croppingPattern,
-                    livestock: cropInformation.liveStock,
+                    livestock: "cropInformation.liveStock",
                     primaryCrop: cropInformation.primarySeason.cropName,
                     primarySeason: cropInformation.primarySeason.seasonName,
                     remarks: cropInformation.remarks || " ",

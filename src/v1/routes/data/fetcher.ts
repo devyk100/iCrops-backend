@@ -10,33 +10,33 @@ const prisma = new PrismaClient();
 
 // async function debouncedData(){
 //   setTimeout(() => {
-    
+
 //   }, 500)  
 // }
 
 // DEBOUNCING HAS to be implemented to reduce the bandwidth of the database usage
 
-export async function debouncer(pageNo: string, entries: string){
-    return prisma.data.findMany({
-        skip: (parseInt(pageNo) - 1) * parseInt(entries),
-        take: parseInt(entries),
+export async function debouncer(pageNo: string, entries: string) {
+  return prisma.data.findMany({
+    skip: (parseInt(pageNo) - 1) * parseInt(entries),
+    take: parseInt(entries),
+    include: {
+      cropInformation: {
+        take: 10,
+      },
+      CCEdata: {
+        take: 10,
+      },
+      images: {
+        take: 10,
+      },
+      user: {
         include: {
-          cropInformation: {
-            take: 10,
-          },
-          CCEdata: {
-            take: 10,
-          },
-          images: {
-            take: 10,
-          },
-          user: {
-            include: {
-              _count: true,
-            },
-          },
+          _count: true,
         },
-      });
+      },
+    },
+  });
 }
 export const requestForFullData = async (req: Request) => {
   const body: {
@@ -126,7 +126,7 @@ export const requestForFullData = async (req: Request) => {
           body.secondaryCrop,
           value.cropInformation[0]?.secondaryCrop
         ) &&
-        filterAndSearch(body.livestock, value.cropInformation[0]?.livestock) &&
+        // filterAndSearch(body.livestock, value.cropInformation[0]?.livestock) &&
         filterAndSearch(
           body.croppingPattern,
           value.cropInformation[0]?.croppingPattern
