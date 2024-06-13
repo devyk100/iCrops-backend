@@ -27,12 +27,12 @@ app.use(cors())
 
 app.use("/api/v1", initialVersionRouter);
 
-app.get("/",(req, res) => {
+app.get("/", (req, res) => {
   console.log("it works")
   res.send("hello")
 })
 
-const server = app.listen(8080, () => {
-  console.log("listening on port 8080");
+const server = app.listen(8090, () => {
+  console.log("listening on port 8090");
   server.setTimeout(60000)
 })

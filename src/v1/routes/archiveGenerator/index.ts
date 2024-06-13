@@ -9,9 +9,31 @@ import { stringify } from "csv-stringify";
 import { exec } from "node:child_process";
 import { xlsxGenerator } from "./xlsx";
 import { requestForFullData } from "../data/fetcher";
+import { rimraf } from "rimraf";
 const archiveRouter = Router();
 
 const prisma = new PrismaClient();
+
+export function deleteFolderRecursive(folderPath: string) {
+  if (fs.existsSync(folderPath)) {
+    fs.readdirSync(folderPath).forEach((file) => {
+      const curPath = path.join(folderPath, file);
+      if (fs.lstatSync(curPath).isDirectory()) {
+        // Recursive call for subdirectories
+        deleteFolderRecursive(curPath);
+      } else {
+        // Delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    // Delete the empty directory once all files and subdirectories have been deleted
+    fs.rmdirSync(folderPath);
+  }
+}
+
+const folderToDelete = 'path/to/folder';
+deleteFolderRecursive(folderToDelete);
+
 
 export const csvGenerator = async (newResponse: any, zipFolderName: string) => {
   const filename = crypto.randomUUID();
@@ -44,10 +66,10 @@ export const csvGenerator = async (newResponse: any, zipFolderName: string) => {
     path.join(__dirname, zipFolderName, filename + ".csv")
   );
   const stringifier = stringify({ header: true, columns: columns });
-//   let newResponse = await requestForData(req);
+  //   let newResponse = await requestForData(req);
   for (let a of newResponse.data) {
     let row = {
-      "data-id":a.id.toString(),
+      "data-id": a.id.toString(),
       Latitude: a.latitude.toString(),
       Longitude: a.longitude.toString(),
       Accuracy: a.accuracy.toString(),
@@ -74,25 +96,32 @@ export const csvGenerator = async (newResponse: any, zipFolderName: string) => {
     stringifier.write(row);
   }
   await stringifier.pipe(writableStream);
+  await stringifier.end();
+
+  await new Promise((resolve, reject) => {
+    writableStream.on('finish', resolve);
+    writableStream.on('error', reject);
+  });
+
   return filename + ".csv";
 };
 
 
-enum Mode{
-    csv,
-    xlsx
+enum Mode {
+  csv,
+  xlsx
 }
 
 const archiveMaker = async (req: Request, res: Response, mode: Mode) => {
-  try{
+  try {
     const newResponse = await requestForFullData(req);
     const zipFolderName = crypto.randomUUID();
-    const zipFileName = zipFolderName + ".zip";
+    const zipFileName = zipFolderName;
     fs.mkdirSync(path.join(__dirname, zipFolderName));
     let csvfilename = "";
     let xlsxfilename = "";
-    if(mode == Mode.csv) csvfilename = await csvGenerator(newResponse, zipFolderName);
-    else if(mode == Mode.xlsx) xlsxfilename = await xlsxGenerator(newResponse, zipFolderName);
+    if (mode == Mode.csv) csvfilename = await csvGenerator(newResponse, zipFolderName);
+    else if (mode == Mode.xlsx) xlsxfilename = await xlsxGenerator(newResponse, zipFolderName);
     // fs.copyFileSync(path.join(__dirname, csvfilename), path.join(__dirname, zipFolderName, csvfilename));
     for (let value of newResponse.data) {
       if (value.images.length > 0)
@@ -119,29 +148,37 @@ const archiveMaker = async (req: Request, res: Response, mode: Mode) => {
         );
       }
     }
-
+    const sourceFolderPath = path.join(__dirname, zipFolderName);
+    const destinationZipPath = path.join(__dirname, zipFileName);
+    const pythonScriptPath = path.join(__dirname, 'archiver.py');
     exec(
-      `cd ${path.join(
-        __dirname,
-        zipFolderName
-      )} && zip -r ${zipFileName} . && cd ..`,
+      `python ${pythonScriptPath} "${sourceFolderPath}" "${destinationZipPath}"`,
       function (err, stdout, stderr) {
         console.log(err, stdout, stderr);
-        const filePath = path.join(__dirname, zipFolderName, zipFileName);
+        if (err) {
+          console.error("Failed to create zip:", err);
+          res.status(500).send("Failed to convert to zip");
+          return;
+        }
+
+        // If 7z command executed successfully, stream the zip file to the response
+        const filePath = destinationZipPath + ".zip";
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(res);
-        if(err) res.send("Failed to convert to zip")
-        setTimeout(() => {
-          console.log("deleted "+zipFolderName)
-          fs.rmSync(path.join(__dirname, zipFolderName), {
-            recursive: true,
-            force: true
-          });
-        }, 200000);
+        // fileStream.close();
+        // Schedule deletion of temporary directory after some time
+        const timerId = setInterval(() => {
+          if (!fileStream.closed) return;
+          console.log("deleted " + zipFolderName);
+          rimraf.sync(sourceFolderPath);
+          rimraf.sync(sourceFolderPath + ".zip")
+          clearInterval(timerId)
+        }, 3000);
       }
     );
+
   }
-  catch(e){
+  catch (e) {
     console.log("error", e)
     res.send({
       success: false,
@@ -151,11 +188,11 @@ const archiveMaker = async (req: Request, res: Response, mode: Mode) => {
 
 
 archiveRouter.post("/", async (req, res) => {
-    await archiveMaker(req, res, Mode.csv);
+  await archiveMaker(req, res, Mode.csv);
 });
 
 archiveRouter.post("/xlsx", async (req, res) => {
-    await archiveMaker(req, res, Mode.xlsx);
+  await archiveMaker(req, res, Mode.xlsx);
 })
 
 

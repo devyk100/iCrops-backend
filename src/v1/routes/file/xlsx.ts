@@ -10,6 +10,7 @@ import fs from "node:fs";
 import { stringify } from "csv-stringify";
 import path from "node:path";
 import { requestForFullData } from "../data/fetcher";
+import { rimraf } from "rimraf";
 
 // await writeXlsxFile(objects, {
 //   schema,
@@ -171,9 +172,12 @@ xlsxFileDataHandler.post("", async (req, res) => {
     const fileStream = fs.createReadStream(filePath);
     fileStream.pipe(res);
 
-    setTimeout(() => {
-      fs.unlinkSync(path.join(__dirname, filename));
-    }, 60000);
+    const timerid = setInterval(() => {
+      if (fileStream.closed) {
+        rimraf.sync(path.join(__dirname, filename));
+        clearInterval(timerid)
+      }
+    }, 3000);
   } catch (e) {
     res.json({
       message: "failed",

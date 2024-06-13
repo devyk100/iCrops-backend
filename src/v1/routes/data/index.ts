@@ -5,6 +5,7 @@ import { adminAuthMiddleware } from "../admin";
 import { filterAndSearch } from "./filter";
 import { debouncer } from "./fetcher";
 import { authMiddleware } from "../user";
+import fs from "node:fs";
 
 const prisma = new PrismaClient();
 const dataRouter = Router();
@@ -153,6 +154,11 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
   try {
     const response = await prisma.$transaction(async (pr) => {
       for (let a of dataIdArr) {
+        const images = await pr.images.findMany({
+          where: {
+            dataId: a,
+          },
+        });
         await pr.images.deleteMany({
           where: {
             dataId: a,
@@ -178,6 +184,10 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
             id: a,
           },
         });
+        for (let image of images) {
+          fs.unlinkSync(path.join(__dirname, "..", "..", "..", "..", "savedImages", image.fileName))
+          fs.unlinkSync(path.join(__dirname, "..", "..", "..", "..", "savedImages", image.fileName + "_original"))
+        }
       }
     });
     res.json({ message: "okay" });
@@ -191,6 +201,7 @@ dataRouter.post("/deletemany", adminAuthMiddleware, async (req, res) => {
 
 dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
   try {
+    const images = await prisma.images.findMany({});
     await prisma.$transaction(async (prisma) => {
       const response1 = await prisma.cCE.deleteMany({});
       const response2 = await prisma.cropInformation.deleteMany({});
@@ -199,6 +210,10 @@ dataRouter.post("/deleteAll", adminAuthMiddleware, async (req, res) => {
       const response = await prisma.data.deleteMany({});
       res.send("done");
     });
+    for (let image of images) {
+      fs.unlinkSync(path.join(__dirname, "..", "..", "..", "..", "savedImages", image.fileName))
+      fs.unlinkSync(path.join(__dirname, "..", "..", "..", "..", "savedImages", image.fileName + "_original"))
+    }
   } catch (e) {
     console.log(e);
     res.status(400).json({
