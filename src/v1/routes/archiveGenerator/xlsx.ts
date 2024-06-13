@@ -37,10 +37,10 @@ const HEADER_ROW = [
     value: "Crop Intensity",
     fontWeight: "bold",
   },
-  {
-    value: "Livestock",
-    fontWeight: "bold",
-  },
+  // {
+  //   value: "Livestock",
+  //   fontWeight: "bold",
+  // },
   {
     value: "Cropping Pattern",
     fontWeight: "bold",

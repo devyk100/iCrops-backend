@@ -134,7 +134,7 @@ xlsxFileDataHandler.post("", async (req, res) => {
         { type: String, value: cropInfo?.waterSource || "" },
         { type: String, value: cropInfo?.cropGrowthStage || "" },
         { type: String, value: cropInfo?.cropIntensity || "" },
-        { type: String, value: cropInfo?.livestock || "" },
+        // { type: String, value: cropInfo?.livestock || "" },
         { type: String, value: cropInfo?.croppingPattern || "" },
         { type: String, value: cropInfo?.primaryCrop || "" },
         { type: String, value: cropInfo?.primarySeason || "" },
