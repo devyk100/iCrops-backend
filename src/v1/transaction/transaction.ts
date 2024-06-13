@@ -146,16 +146,16 @@ export class Transactions {
             const cropInformation = body.cropInformation;
             await prisma.cropInformation.create({
                 data: {
-                    cropGrowthStage: cropInformation.cropGrowthStage,
-                    cropIntensity: cropInformation.cropIntensity,
-                    croppingPattern: cropInformation.croppingPattern,
-                    livestock: "cropInformation.liveStock",
-                    primaryCrop: cropInformation.primarySeason.cropName,
-                    primarySeason: cropInformation.primarySeason.seasonName,
+                    cropGrowthStage: cropInformation.cropGrowthStage || " ",
+                    cropIntensity: cropInformation.cropIntensity || " ",
+                    croppingPattern: cropInformation.croppingPattern || " ",
+                    livestock: "cropInformation.liveStock" || " ",
+                    primaryCrop: cropInformation.primarySeason.cropName || " ",
+                    primarySeason: cropInformation.primarySeason.seasonName || " ",
                     remarks: cropInformation.remarks || " ",
-                    secondaryCrop: cropInformation.secondarySeason.cropName,
-                    secondarySeason: cropInformation.secondarySeason.seasonName,
-                    waterSource: cropInformation.waterSource,
+                    secondaryCrop: cropInformation.secondarySeason.cropName || " ",
+                    secondarySeason: cropInformation.secondarySeason.seasonName || " ",
+                    waterSource: cropInformation.waterSource || " ",
                     data: {
                         connect: {
                             id: result.id,
@@ -168,13 +168,13 @@ export class Transactions {
             const CCEData = body.CCE;
             await prisma.cCE.create({
                 data: {
-                    biomassWeight: parseInt(CCEData.biomassWeight),
-                    cultivar: CCEData.cultivar,
-                    sowDate: new Date(CCEData.sowDate),
-                    grainWeight: parseInt(CCEData.grainWeight),
-                    harvestDate: new Date(CCEData.harvestDate),
-                    sampleSize_1: parseInt(CCEData.sampleSize1),
-                    sampleSize_2: parseInt(CCEData.sampleSize2),
+                    biomassWeight: parseInt(CCEData.biomassWeight) || 0,
+                    cultivar: CCEData.cultivar || "",
+                    sowDate: new Date(CCEData.sowDate) || "",
+                    grainWeight: parseInt(CCEData.grainWeight) || 0,
+                    harvestDate: new Date(CCEData.harvestDate) || "",
+                    sampleSize_1: parseInt(CCEData.sampleSize1) || 0,
+                    sampleSize_2: parseInt(CCEData.sampleSize2) || 0,
                     data: {
                         connect: {
                             id: result.id,
